@@ -68,6 +68,7 @@ include 'repose-aggregator',
         'repose-aggregator:external:pjl-compressing-filter',
         'repose-aggregator:tests:mocks-servlet',
         'repose-aggregator:tests:functional-tests',
+        'repose-aggregator:tests:release-verification',
         'repose-aggregator:tests:test-containers:test-container-api',
         'repose-aggregator:tests:test-containers:test-container-glassfish',
         'repose-aggregator:tests:test-containers:test-container-tomcat'

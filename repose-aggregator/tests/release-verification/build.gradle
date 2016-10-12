@@ -50,43 +50,34 @@ task vagrantDestroyRpm(type: VagrantDestroy) {
     boxDir = rpmBoxDir
 }
 
-task('smokeTestDeb', description: 'tests if the DEB Repose instance can handle basic requests', dependsOn: 'vagrantUpDeb') << {
-    // TODO: Replace retry logic. How do we know when Repose is ready?
-    // TODO: Don't repeat this logic in multiple tasks -- make this task a type?
-    def responseCode = -1
-    def attempt = 0
-    while (responseCode != 200 && attempt < 10) {
-      attempt++
-      responseCode = Request.get("http://localhost:8080")
-        .execute()
-        .returnResponse()
-        .getStatusLine()
-        .getStatusCode()
-    }
 
-    if (responseCode != 200) {
-      throw new GradleException('HTTP requests to the Repose instance failed')
-    }
+task('smokeTestDeb', description: 'tests if the DEB Repose instance can handle basic requests', dependsOn: 'vagrantUpDeb') << {
+    generateLoad()
 }
 
 task('smokeTestRpm', description: 'tests if the RPM Repose instance can handle basic requests', dependsOn: 'vagrantUpRpm') << {
-    def responseCode = -1
-    def attempt = 0
-    while (responseCode != 200 && attempt < 10) {
-      attempt++
-      responseCode = Request.get("http://localhost:8080")
-        .execute()
-        .returnResponse()
-        .getStatusLine()
-        .getStatusCode()
-    }
-
-    if (responseCode != 200) {
-      throw new GradleException('HTTP requests to the Repose instance failed')
-    }
+    generateLoad()
 }
 
 task('smokeTest', description: 'tests if the Repose instance can handle basic requests', group: 'release', dependsOn: ['smokeTestDeb', 'smokeTestRpm'])
 
 // Note: At this time, release verification will be handled out-of-band with the release. Therefore,
 //       no wiring was added to place the 'smokeTest' task into existing task flows.
+
+def generateLoad() {
+    // TODO: Replace retry logic. How do we know when Repose is ready?
+    def responseCode = -1
+    def attempt = 0
+    while (responseCode != 200 && attempt < 10) {
+        attempt++
+        responseCode = Request.get("http://localhost:8080")
+        .execute()
+        .returnResponse()
+        .getStatusLine()
+        .getStatusCode()
+    }
+
+    if (responseCode != 200) {
+        throw new GradleException('HTTP requests to the Repose instance failed')
+    }
+}

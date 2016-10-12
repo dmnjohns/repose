@@ -75,6 +75,10 @@ def generateLoad() {
         .returnResponse()
         .getStatusLine()
         .getStatusCode()
+
+        if (responseCode != 200) {
+            sleep(6)
+        }
     }
 
     if (responseCode != 200) {
